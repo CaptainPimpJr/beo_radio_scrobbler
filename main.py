@@ -74,7 +74,7 @@ class MetadataParser:
     
     def parse(self, station_name: str, live_desc: str):
         if station_name not in self.stations:
-            return None, None
+            return 'Station Rule Not defined', None
         
         config = self.stations[station_name]
         
@@ -199,7 +199,7 @@ async def scrobbler_action(artist: str, title: str, timestamp: str) -> None:
             ).to(local_time).timestamp()
 
     # start scrobbling
-    logger.debug(f"Scrobbling: {artist} - {title} at {timestamp}")
+    logger.debug(f"Scrobbling: {artist} - {title} at {arrow.get(timestamp).format('YYYY-MM-DD HH:mm:ss')}")
     try:
         network.scrobble(
             artist,
@@ -232,90 +232,6 @@ async def scrobbler_action(artist: str, title: str, timestamp: str) -> None:
 
     return
 
-async def old_station_logic(station_name: str, live_description: str, timestamp: str) -> None:
-    # Implement your station-specific logic here
-    if station_name == "SWR1 Rheinland-Pfalz":
-        if 'SWR' in live_description:
-            logger.debug(f"{station_name}: {live_description}")
-            return
-        elif ' / ' in live_description:
-            title, artist = live_description.split(' / ', 1)
-        else:
-            logger.debug(f"{station_name}: {live_description}")
-            return
-    elif station_name == "SWR3":
-        if 'SWR' in live_description:
-            logger.debug(f"{station_name}: {live_description}")
-            return
-        elif ' / ' in live_description:
-            title, artist = live_description.split(' / ', 1)
-        else:
-            logger.debug(f"{station_name}: {live_description}")
-            return
-    elif station_name == "WDR 4 Ruhrgebiet":
-        if 'WDR' in live_description:
-            logger.debug(f"{station_name}: {live_description}")
-            return
-        elif ' - ' in live_description:
-            artist, title = live_description.split(' - ', 1)
-        else:
-            logger.debug(f"{station_name}: {live_description}")
-            return
-    elif station_name == "Schwarzwaldradio":
-        if 'Schwarzwaldradio' in live_description:
-            logger.debug(f"{station_name}: {live_description}")
-            return
-        elif ' - ' in live_description:
-            artist, title = live_description.split(' - ', 1)
-        else:
-            logger.debug(f"{station_name}: {live_description}")
-            return
-    elif station_name == "COSMO":
-        if 'COSMO' in live_description:
-            logger.debug(f"{station_name}: {live_description}")
-            return
-        elif 'WDR' in live_description:
-            logger.debug(f"{station_name}: {live_description}")
-            return
-        elif ' - ' in live_description:
-            artist, title = live_description.split(' - ', 1)
-        else:
-            logger.debug(f"{station_name}: {live_description}")
-            return
-    elif station_name == "1LIVE":
-        if '1LIVE' in live_description:
-            logger.debug(f"{station_name}: {live_description}")
-            return
-        elif ' - ' in live_description:
-            artist, title = live_description.split(' - ', 1)
-        else:
-            logger.debug(f"{station_name}: {live_description}")
-            return
-    elif station_name == "WDR 2 Rheinland":
-        if 'WDR' in live_description:
-            logger.debug(f"{station_name}: {live_description}")
-            return
-        elif ' - ' in live_description:
-            artist, title = live_description.split(' - ', 1)
-        else:
-            logger.debug(f"{station_name}: {live_description}")
-            return
-    elif station_name == "The Jazz Groove - Mix #1":
-        if 'Jazz Groove' in live_description:
-            logger.debug(f"{station_name}: {live_description}")
-            return
-        elif ' - ' in live_description:
-            artist, title = live_description.split(' - ', 1)
-        else:
-            logger.debug(f"{station_name}: {live_description}")
-            return
-    else:
-        logger.error(f"NO RULES FOR: {station_name}: {live_description}")
-        return
-    
-    await scrobbler_action(artist.strip(), title.strip(), timestamp)
-    
-    return
 
 
 async def station_logic(station_name: str, live_description: str, timestamp: str) -> None:
@@ -326,9 +242,11 @@ async def station_logic(station_name: str, live_description: str, timestamp: str
     
     if artist and title:
         pass
-    else:
+    elif artist or title:
         logger.error(f"NO RULES FOR: {station_name}: {live_description}")
         return
+    else:
+        pass  # Skipped due to rules
     
     await scrobbler_action(artist.strip(), title.strip(), timestamp)
     

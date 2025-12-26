@@ -20,3 +20,6 @@ log_*.log
 
 #Station rules
 station_rules.yaml
+
+#memories from the past
+ausrangiert.py
