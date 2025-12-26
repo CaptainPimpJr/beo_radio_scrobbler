@@ -7,6 +7,10 @@ from dotenv import load_dotenv
 import pylast
 from loguru import logger
 import arrow
+import yaml
+from typing import List, Optional
+from pydantic import BaseModel
+from pathlib import Path
 
 #.env file
 load_dotenv()
@@ -15,6 +19,7 @@ load_dotenv()
 ip_beo = "192.168.178.94"
 local_time = os.getenv("LOCAL_TIMEZONE", default='UTC')  #e.g. "Europe/Berlin"
 run_mode = os.getenv("RUN_MODE", default='detect_smpl')  #development or production
+station_rules_file = Path(Path.cwd(), 'station_rules.yaml')
 
 # logging
 logger.level("SCROBBLE", no=25, color="<yellow>", icon="🎵")
@@ -48,6 +53,70 @@ elif run_mode == 'notify_me':
 else:
     pass
 
+
+
+class StationConfig(BaseModel):
+    parser_type: str
+    skip_if_contains: List[str]
+    delimiter: Optional[str] = None
+    artist_first: Optional[bool] = True
+    pattern: Optional[str] = None
+    field_mapping: Optional[List[str]] = None
+
+class MetadataParser:
+    def __init__(self, config_path: str):
+        with open(config_path, 'r') as f:
+            raw_config = yaml.safe_load(f)
+        self.stations = {
+            name: StationConfig(**cfg) 
+            for name, cfg in raw_config['stations'].items()
+        }
+    
+    def parse(self, station_name: str, live_desc: str):
+        if station_name not in self.stations:
+            return None, None
+        
+        config = self.stations[station_name]
+        
+        # Check skip conditions
+        for skip_pattern in config.skip_if_contains:
+            if skip_pattern in live_desc:
+                return None, None
+        
+        # Apply parser strategy
+        if config.parser_type == "delimiter_split":
+            return self._parse_delimiter(live_desc, config)
+        elif config.parser_type == "regex_match":
+            return self._parse_regex(live_desc, config)
+        
+        return None, None
+    
+    def _parse_delimiter(self, live_desc: str, config: StationConfig):
+        if config.delimiter not in live_desc:
+            return None, None
+        
+        parts = live_desc.split(config.delimiter, 1)
+        if len(parts) != 2:
+            return None, None
+        
+        if config.artist_first:
+            return parts[0].strip(), parts[1].strip()
+        else:
+            return parts[1].strip(), parts[0].strip()
+    
+    def _parse_regex(self, live_desc: str, config: StationConfig):
+        import re
+        match = re.match(config.pattern, live_desc)
+        if not match:
+            return None, None
+        
+        groups = match.groups()
+        # Map to artist, title based on field_mapping
+        mapping = {field: groups[i] for i, field in enumerate(config.field_mapping)}
+        return mapping.get('artist'), mapping.get('title')
+
+
+parser = MetadataParser(station_rules_file)
 
 async def check_standby() -> bool:
     url = f"http://{ip_beo}:8080/BeoDevice/powerManagement/standby"
@@ -248,6 +317,24 @@ async def old_station_logic(station_name: str, live_description: str, timestamp:
     
     return
 
+
+async def station_logic(station_name: str, live_description: str, timestamp: str) -> None:
+    # Implement your station-specific logic here
+    
+    
+    artist, title = parser.parse(station_name, live_description)
+    
+    if artist and title:
+        pass
+    else:
+        logger.error(f"NO RULES FOR: {station_name}: {live_description}")
+        return
+    
+    await scrobbler_action(artist.strip(), title.strip(), timestamp)
+    
+    return
+
+
 async def get_stream() -> None:
     url = f"http://{ip_beo}:8080/BeoNotify/Notifications"
     s = requests.Session()
@@ -331,7 +418,6 @@ async def main():
             logger.info("Device is in standby mode. Going to sleep")
             
         await sleeping_routine()
-
 
 
 if __name__ == "__main__":
