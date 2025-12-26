@@ -1,0 +1,22 @@
+stations:
+  BBC - London:
+    parser_type: "delimiter_split"
+    skip_if_contains:
+      - "BBC"
+    delimiter: " / "
+    artist_first: true
+  
+  Jazz FM:
+    parser_type: "delimiter_split"
+    skip_if_contains:
+      - "Jazz FM"
+      - "Commercial break"
+    delimiter: " - "
+    artist_first: false  # title comes first
+  
+  Complex Station:
+    parser_type: "regex_match"
+    skip_if_contains:
+      - "Advertisement"
+    pattern: "^(.+?) - (.+?) \\[(.+?)\\]$"
+    field_mapping: ["artist", "title", "album"]

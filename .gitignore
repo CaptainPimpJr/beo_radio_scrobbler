@@ -14,3 +14,9 @@ wheels/
 
 # .env
 .env
+
+# Log files
+log_*.log
+
+#Station rules
+station_rules.yaml

@@ -8,13 +8,18 @@ import pylast
 from loguru import logger
 import arrow
 
+#.env file
+load_dotenv()
+
 #variables
 ip_beo = "192.168.178.94"
 local_time = os.getenv("LOCAL_TIMEZONE", default='UTC')  #e.g. "Europe/Berlin"
-
+run_mode = os.getenv("RUN_MODE", default='detect_smpl')  #development or production
 
 # logging
 logger.level("SCROBBLE", no=25, color="<yellow>", icon="🎵")
+logger.level("STATION", no=26, color="<green>", icon="📻")
+logger.level("NOTIFICATION", no=27, color="<blue>", icon="🔔")
 
 logger.add(
     "log_radio_scrobbler.log",
@@ -22,17 +27,27 @@ logger.add(
     retention="7 days",
     format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}",
 )
+if run_mode == 'production':
+    logger.add('log_scrobbles.log',
+            rotation="w1",
+            retention="5 years",
+            format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
+            level="SCROBBLE")
+elif run_mode == 'detect':
+    logger.add('log_detections.log',
+            rotation="00:00",
+            retention="1 week",
+            format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
+            level="STATION")
+elif run_mode == 'notify_me':
+    logger.add('log_notifications.log',
+            rotation="00:00",
+            retention="7 days",
+            format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
+            level="NOTIFICATION")
+else:
+    pass
 
-logger.add('log_scrobbles.log',
-           rotation="w1",
-           retention="5 years",
-           format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
-           level="SCROBBLE")
-
-
-
-#.env file
-load_dotenv()
 
 async def check_standby() -> bool:
     url = f"http://{ip_beo}:8080/BeoDevice/powerManagement/standby"
@@ -148,7 +163,7 @@ async def scrobbler_action(artist: str, title: str, timestamp: str) -> None:
 
     return
 
-async def station_logic(station_name: str, live_description: str, timestamp: str) -> None:
+async def old_station_logic(station_name: str, live_description: str, timestamp: str) -> None:
     # Implement your station-specific logic here
     if station_name == "SWR1 Rheinland-Pfalz":
         if 'SWR' in live_description:
@@ -242,31 +257,80 @@ async def get_stream() -> None:
         for line in resp.iter_lines():
             if line:
                 l = json.loads(line.decode('utf-8'))
-                if l['notification']['type'] == 'NOW_PLAYING_NET_RADIO':
-                    
-                    logger.debug(l)
-                    
-                    await station_logic(station_name=l['notification']['data']['name'],
-                                  live_description=l['notification']['data']['liveDescription'],
-                                  timestamp=l['notification']['timestamp'])
+
+                if run_mode == 'notify_me':
+                    if l['notification']['type'] != 'PROGRESS_INFORMATION':
+                        logger.log("NOTIFICATION", l)
+                else:
+                    if l['notification']['type'] == 'NOW_PLAYING_NET_RADIO':
+                        
+                        if not run_mode == 'detect_smpl':
+                            logger.log("STATION", l)
+                        try:
+                            logger.log("STATION", f"Detected station: [data][name]: {l['notification']['data']['name']}; [data][liveDescription]: {l['notification']['data']['liveDescription']}")
+                        except KeyError:
+                            pass
+                        
+                        if run_mode != 'detect':
+                            await station_logic(station_name=l['notification']['data']['name'],
+                                        live_description=l['notification']['data']['liveDescription'],
+                                        timestamp=l['notification']['timestamp'])
     
     return
 
+async def sleeping_routine() -> None:
+    '''
+    Sleeps according to working hours defined in .env file.
+    '''
+    working_hours_start = arrow.get(os.environ.get("WORKING_HOURS_START", "06:00"), 'HH:mm').format('HH:mm')
+    working_hours_end = arrow.get(os.environ.get("WORKING_HOURS_END", "23:00"), 'HH:mm').format('HH:mm')
+    now = arrow.now().to(local_time).format('HH:mm')
+    
+    if working_hours_start < working_hours_end:
+        if working_hours_start <= now <= working_hours_end:
+            logger.info(f"Within working hours. Sleeping for 1 minutes. {working_hours_end=}, {working_hours_start=}, {now=}")
+            await asyncio.sleep(60)
+        else:
+            for i in range(30):
+                if (arrow.now().to(local_time).shift(minutes=+1).format('HH:mm') >= working_hours_start) \
+                    and (arrow.now().to(local_time).shift(minutes=+1).format('HH:mm') <= working_hours_end):
+                    break
+            logger.info(f"Outside working hours. Sleeping for {i+2} minutes.")
+            await asyncio.sleep(60*(i+2))
+    else:
+        if now >= working_hours_start or now <= working_hours_end:
+            logger.info(f"Within working hours. Sleeping for 1 minutes. {working_hours_end=}, {working_hours_start=}, {now=}")
+            await asyncio.sleep(60)
+        else:
+            for i in range(30):
+                if (arrow.now().to(local_time).shift(minutes=+1).format('HH:mm') <= working_hours_start) \
+                    and (arrow.now().to(local_time).shift(minutes=+1).format('HH:mm') >= working_hours_end):
+                    break
+            logger.info(f"Outside working hours. Sleeping for {i+2} minutes.")
+            await asyncio.sleep(60*(i+2))
+    return
+
+
 async def main():
+    logger.info(f"Starting Radio Scrobbler...")
     while True:
         if await check_standby():
             try:
                 if await check_radio_active():
                     logger.info("Radio is active.")
                     await get_stream()
+                    if run_mode in ['detect', 'notify_me']:
+                        logger.info("Run mode is 'detect' or 'notify_me'. Exiting after one round of detection.")
+                        break
                 else:
                     logger.info("Radio is not active. Going to sleep.")
-                    await asyncio.sleep(60)
+                    
             except KeyError:
                 logger.error("KeyError checking radio status. - Should be none-critical")
         else:
             logger.info("Device is in standby mode. Going to sleep")
-            await asyncio.sleep(60)
+            
+        await sleeping_routine()
 
 
 
