@@ -246,7 +246,7 @@ async def station_logic(station_name: str, live_description: str, timestamp: str
         logger.error(f"NO RULES FOR: {station_name}: {live_description}")
         return
     else:
-        pass  # Skipped due to rules
+        return  # Skipped due to rules
     
     await scrobbler_action(artist.strip(), title.strip(), timestamp)
     
@@ -314,6 +314,8 @@ async def sleeping_routine() -> None:
             logger.info(f"Outside working hours. Sleeping for {i+2} minutes.")
             await asyncio.sleep(60*(i+2))
     return
+
+
 
 
 async def main():
