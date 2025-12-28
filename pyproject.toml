@@ -13,3 +13,6 @@ dependencies = [
     "pyyaml>=6.0.3",
     "requests>=2.32.5",
 ]
+
+[project.scripts]
+beo-radio-scrobbler = "beo_radio_scrobbler.__main__:main"

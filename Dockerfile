@@ -61,4 +61,4 @@ ENV LOCAL_TIMEZONE=Europe/Berlin
 ENV RUN_MODE=detect
 
 # Run the FastAPI application by default
-CMD ["python", "main.py"]
+CMD ["python", "-m", "beo_radio_scrobbler"]
