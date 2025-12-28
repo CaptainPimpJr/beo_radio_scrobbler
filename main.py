@@ -222,7 +222,7 @@ async def scrobbler_action(artist: str, title: str, timestamp: str) -> None:
 
     if most_recent_artist and most_recent_title:
         
-        if most_recent_artist.lower() == artist.lower() and most_recent_title.lower() == title.lower():
+        if most_recent_artist.casefold() == artist.casefold() and most_recent_title.casefold() == title.casefold():
             logger.log("SCROBBLE", f"Successfully scrobbled: {artist} - {title}")
         else:
             logger.error(f"Scrobble verification failed for:")
