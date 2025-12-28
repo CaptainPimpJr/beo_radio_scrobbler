@@ -38,6 +38,7 @@ Dockerfile
 # Documentation
 README.md
 docs/
+documentation/
 
 # Tests
 tests/
@@ -45,4 +46,7 @@ tests/
 
 # Log Files
 *.log
-logs/*.log
+data/logs/*.log
+
+# config
+data/config/station_rules.yaml
