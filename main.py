@@ -30,7 +30,7 @@ logger.level("STATION", no=26, color="<green>", icon="📻")
 logger.level("NOTIFICATION", no=27, color="<blue>", icon="🔔")
 
 logger.add(
-    "log_radio_scrobbler.log",
+    Path(Path.cwd() / "logs" / "log_radio_scrobbler.log"),
     rotation="00:00",
     retention="7 days",
     format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}",
@@ -222,7 +222,7 @@ async def scrobbler_action(artist: str, title: str, timestamp: str) -> None:
 
     if most_recent_artist and most_recent_title:
         
-        if most_recent_artist == artist and most_recent_title == title:
+        if most_recent_artist.lower() == artist.lower() and most_recent_title.lower() == title.lower():
             logger.log("SCROBBLE", f"Successfully scrobbled: {artist} - {title}")
         else:
             logger.error(f"Scrobble verification failed for:")
