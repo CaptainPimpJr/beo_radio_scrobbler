@@ -13,10 +13,13 @@ from pydantic import BaseModel
 from pathlib import Path
 
 #.env file
-load_dotenv()
+if os.getenv("IN_PROD") == "1":
+    pass  # In production, assume environment variables are set externally
+else:
+    load_dotenv()
 
 #variables
-ip_beo = "192.168.178.94"
+beo_ip = os.getenv("BEO_IP", default='')
 local_time = os.getenv("LOCAL_TIMEZONE", default='UTC')  #e.g. "Europe/Berlin"
 run_mode = os.getenv("RUN_MODE", default='detect_smpl')  #development or production
 station_rules_file = Path(Path.cwd(), 'station_rules.yaml')
@@ -119,7 +122,7 @@ class MetadataParser:
 parser = MetadataParser(station_rules_file)
 
 async def check_standby() -> bool:
-    url = f"http://{ip_beo}:8080/BeoDevice/powerManagement/standby"
+    url = f"http://{beo_ip}:8080/BeoDevice/powerManagement/standby"
     payload = ""
     headers = {
     'Content-Type': 'application/json'
@@ -135,7 +138,7 @@ async def check_standby() -> bool:
     
 
 async def check_radio_active() -> bool:
-    url = f"http://{ip_beo}:8080/BeoZone/Zone/ActiveSources"
+    url = f"http://{beo_ip}:8080/BeoZone/Zone/ActiveSources"
     payload={}
     headers = {
       'Content-Type': 'application/json'
@@ -254,7 +257,7 @@ async def station_logic(station_name: str, live_description: str, timestamp: str
 
 
 async def get_stream() -> None:
-    url = f"http://{ip_beo}:8080/BeoNotify/Notifications"
+    url = f"http://{beo_ip}:8080/BeoNotify/Notifications"
     s = requests.Session()
 
     with s.get(url, headers=None, stream=True) as resp:
@@ -341,4 +344,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logger.info("Radio Scrobbler stopped by user.")
