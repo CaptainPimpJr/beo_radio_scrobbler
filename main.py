@@ -30,7 +30,7 @@ logger.level("STATION", no=26, color="<green>", icon="📻")
 logger.level("NOTIFICATION", no=27, color="<blue>", icon="🔔")
 
 logger.add(
-    Path(Path.cwd() / "logs" / "log_radio_scrobbler.log"),
+    Path(Path.cwd() / "data" / "logs" / "log_radio_scrobbler.log"),
     rotation="00:00",
     retention="7 days",
     format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}",
