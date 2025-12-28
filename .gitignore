@@ -10,13 +10,14 @@ wheels/
 .venv
 
 # Jupyter Notebook checkpoints
-/jupyter
+jupyter/
 
 # .env
 .env
 
 # Log files
 log_*.log
+logs/log_*.log
 
 #Station rules
 station_rules.yaml

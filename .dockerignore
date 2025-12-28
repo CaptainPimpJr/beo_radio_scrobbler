@@ -45,4 +45,4 @@ tests/
 
 # Log Files
 *.log
-logs/
+logs/*.log
