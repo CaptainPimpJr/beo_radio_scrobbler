@@ -38,7 +38,6 @@ Dockerfile
 # Documentation
 README.md
 docs/
-documentation/
 
 # Tests
 tests/
