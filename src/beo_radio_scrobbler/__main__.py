@@ -26,8 +26,13 @@ async def main():
         await sleeping_routine()
 
 
-if __name__ == "__main__":
+def cli():
+    """Entry point for the command-line interface."""
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
         logger.info("Radio Scrobbler stopped by user.")
+
+
+if __name__ == "__main__":
+    cli()

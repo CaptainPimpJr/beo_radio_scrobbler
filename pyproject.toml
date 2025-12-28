@@ -15,4 +15,11 @@ dependencies = [
 ]
 
 [project.scripts]
-beo-radio-scrobbler = "beo_radio_scrobbler.__main__:main"
+beo-radio-scrobbler = "beo_radio_scrobbler.__main__:cli"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/beo_radio_scrobbler"]
