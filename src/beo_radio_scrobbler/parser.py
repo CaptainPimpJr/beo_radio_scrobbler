@@ -1,3 +1,4 @@
+import re
 import yaml
 from .models import StationConfig
 from .config import station_rules_file
@@ -45,7 +46,6 @@ class MetadataParser:
             return parts[1].strip(), parts[0].strip()
     
     def _parse_regex(self, live_desc: str, config: StationConfig):
-        import re
         match = re.match(config.pattern, live_desc)
         if not match:
             return None, None

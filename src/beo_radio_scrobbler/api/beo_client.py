@@ -1,6 +1,7 @@
 import requests
 import json
 from ..config import beo_ip, logger, run_mode
+from ..scrobbler.processor import station_logic
 
 
 async def check_standby() -> bool:
@@ -35,7 +36,6 @@ async def check_radio_active() -> bool:
     
 
 async def get_stream() -> None:
-    from ..scrobbler.processor import station_logic
     
     url = f"http://{beo_ip}:8080/BeoNotify/Notifications"
     s = requests.Session()

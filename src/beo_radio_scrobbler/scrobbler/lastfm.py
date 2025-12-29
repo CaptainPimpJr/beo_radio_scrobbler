@@ -25,6 +25,29 @@ async def most_recent_scrobble(network: pylast.LastFMNetwork) -> tuple:
         return None, None
     return most_recent_artist.strip(), most_recent_title.strip()
 
+async def double_scrobble_check(artist: str, title: str, network: pylast.LastFMNetwork) -> bool:
+    '''
+    Checks if the given artist and title match the most recent scrobble.
+    Returns True:
+        if the most recent scrobble equals the given artist and title.
+        
+    Returns False: 
+        if the most recent scrobble does not match the given artist and title.
+    
+    Raises Exception:
+        if there was an error fetching the most recent scrobble.
+    '''
+    most_recent_artist, most_recent_title = await most_recent_scrobble(network)
+    if most_recent_artist and most_recent_title:
+        if most_recent_artist.casefold() == artist.casefold() and most_recent_title.casefold() == title.casefold():
+            return True
+        else:
+            logger.debug(f"Most recent scrobble: {most_recent_artist} - {most_recent_title}; Current track: {artist} - {title}")
+            return False
+    else:
+        raise Exception("Error fetching recent scrobble")
+
+
 async def scrobbler_action(artist: str, title: str, timestamp: str) -> None:
     try:
         network = pylast.LastFMNetwork(
@@ -39,13 +62,13 @@ async def scrobbler_action(artist: str, title: str, timestamp: str) -> None:
         return
     
     # check for double scrobble
-    most_recent_artist, most_recent_title = await most_recent_scrobble(network)
-    if most_recent_artist and most_recent_title:
-        if most_recent_artist == artist and most_recent_title == title:
-            logger.info(f"Duplicate scrobble detected for: {artist} - {title}. Skipping scrobble.")
+    try:
+        if await double_scrobble_check(artist, title, network):
+            # either duplicate or error
+            logger.info(f"Track already scrobbled: {artist} - {title}")
             return
-    else:
-        logger.error("Could not verify recent scrobble due to error fetching recent scrobbles.")
+    except Exception as e:
+        logger.error(f"Error during double scrobble check: {e}")
         logger.log("SCROBBLE", f"Scrobble not confirmed: {artist} - {title}")
         return
 
@@ -71,19 +94,16 @@ async def scrobbler_action(artist: str, title: str, timestamp: str) -> None:
     await asyncio.sleep(2)
     
     # check if scrobble was successful
-    most_recent_artist, most_recent_title = await most_recent_scrobble(network)
-
-    if most_recent_artist and most_recent_title:
-        
-        if most_recent_artist.casefold() == artist.casefold() and most_recent_title.casefold() == title.casefold():
+    try:
+        if await double_scrobble_check(artist, title, network):
+            # either duplicate or error
             logger.log("SCROBBLE", f"Successfully scrobbled: {artist} - {title}")
         else:
             logger.error(f"Scrobble verification failed for:")
             logger.log("SCROBBLE", f"Scrobble not confirmed: {artist} - {title}")
-            logger.error(f"Expected: {artist} - {title}, Got: {most_recent_artist} - {most_recent_title}")
-    else:
-        logger.error("Could not verify scrobble due to error fetching recent scrobbles.")
+    except Exception as e:
+        logger.error(f"Error during scrobble verification: {e}")
         logger.log("SCROBBLE", f"Scrobble not confirmed: {artist} - {title}")
-        return
+
 
     return

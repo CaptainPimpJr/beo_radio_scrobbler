@@ -27,22 +27,25 @@ logger.add(
     format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}",
 )
 if run_mode == 'production':
-    logger.add('log_scrobbles.log',
-            rotation="w1",
-            retention="5 years",
-            format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
-            level="SCROBBLE")
+    logger.add(
+        Path(Path.cwd() / "data" / "logs" / "log_scrobbles.log"),
+        rotation="w1",
+        retention="5 years",
+        format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
+        filter=lambda record: record["level"].no == 25)
 elif run_mode in ['detect', 'detect_smpl']:
-    logger.add('log_detections.log',
-            rotation="00:00",
-            retention="1 week",
-            format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
-            level="STATION")
+    logger.add(
+        Path(Path.cwd() / "data" / "logs" / "log_detections.log"),
+        rotation="00:00",
+        retention="1 week",
+        format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
+        filter=lambda record: record["level"].no == 26)
 elif run_mode == 'notify_me':
-    logger.add('log_notifications.log',
-            rotation="00:00",
-            retention="7 days",
-            format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
-            level="NOTIFICATION")
+    logger.add(
+        Path(Path.cwd() / "data" / "logs" / "log_notifications.log"),
+        rotation="00:00",
+        retention="7 days",
+        format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
+        level="NOTIFICATION")
 else:
     pass
