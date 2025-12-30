@@ -53,12 +53,13 @@ WORKDIR /app
 
 ENV IN_PROD=1
 # ENVIRONMENT VARIABLES that need to be set
-ENV API_KEY=
-ENV API_SECRET=
-ENV USERNAME=
-ENV PASSWORD=
+ENV API_KEY=abcd1234
+ENV API_SECRET=1234abcd
+ENV USERNAME=your_username
+ENV PASSWORD=your_password
 ENV LOCAL_TIMEZONE=Europe/Berlin
 ENV RUN_MODE=detect
+ENV BEO_IP=192.168.1.100
 
 # Run the FastAPI application by default
 CMD ["python", "-m", "beo_radio_scrobbler"]
