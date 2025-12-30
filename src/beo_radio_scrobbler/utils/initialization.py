@@ -13,7 +13,7 @@ async def initialize_logging():
     if sample_file.exists():
         pass
     else:
-        shutil.copy(Path(Path.cwd() / "data" / "logs" / "sample-log_radio_scrobbler.log"), sample_file)
+        shutil.copy(Path(Path.cwd() / "sample-data" / "sample-log_radio_scrobbler.log"), sample_file)
         logger.info("Created sample log file.")
        
 
@@ -28,5 +28,5 @@ async def initialize_config():
     if sample_file.exists():
         pass
     else:
-        shutil.copy(Path(Path.cwd() / "data" / "config" / "sample-station_rules.yaml"), sample_file)
+        shutil.copy(Path(Path.cwd() / "sample-data" / "sample-station_rules.yaml"), sample_file)
         logger.info("Created sample station rules file.")

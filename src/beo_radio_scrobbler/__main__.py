@@ -2,7 +2,7 @@ import asyncio
 from .config import logger, run_mode
 from .api.beo_client import check_standby, check_radio_active, get_stream
 from .utils.scheduling import sleeping_routine
-from .utils.init import initialize_logging, initialize_config
+from .utils.initialization import initialize_logging, initialize_config
 
 
 async def main():
