@@ -27,6 +27,8 @@ COPY . /app
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked
 
+RUN mkdir /app/appdata
+
 # Then, use a final image without uv
 #FROM debian:bookworm-slim
 #Docker Hardened Image
