@@ -37,10 +37,10 @@ FROM dhi.io/python:3.11
 # && useradd --system --gid 999 --uid 999 --create-home nonroot
 
 # Copy the Python version
-COPY --from=builder --chown=python:python /python /python
+COPY --from=builder --chown=nobody:users /python /python
 
 # Copy the application from the builder
-COPY --from=builder --chown=nonroot:nonroot /app /app
+COPY --from=builder --chown=nobody:users /app /app
 
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
