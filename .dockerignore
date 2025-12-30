@@ -49,3 +49,7 @@ data/logs/*.log
 
 # config
 data/config/station_rules.yaml
+config/
+
+# appdata folder
+/appdata/
