@@ -6,6 +6,11 @@
 FROM dhi.io/uv:0-debian13-dev AS builder
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 
+# Create a non-root user to run the application
+RUN groupadd --system --gid 100 nonroot \
+ && useradd --system --gid 100 --uid 99 --create-home nonroot
+
+
 # Omit development dependencies
 ENV UV_NO_DEV=1
 
@@ -19,11 +24,16 @@ ENV UV_PYTHON_PREFERENCE=only-managed
 RUN uv python install 3.11
 
 WORKDIR /app
+
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --locked --no-install-project
-COPY . /app
+
+# Copy the application from the builder
+COPY --from=builder --chown=nonroot:nonroot /app /app
+#COPY . /app
+
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked
 
@@ -34,10 +44,6 @@ RUN mkdir /app/appdata
 #Docker Hardened Image
 FROM dhi.io/python:3.11
 
-# Setup a non-root user
-#RUN groupadd --system --gid 999 nonroot \
-# && useradd --system --gid 999 --uid 999 --create-home nonroot
-
 # Copy the Python version
 COPY --from=builder --chown=python:python /python /python
 
@@ -46,9 +52,6 @@ COPY --from=builder --chown=nonroot:nonroot /app /app
 
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
-
-# Use the non-root user to run our application
-#USER nonroot
 
 # Use `/app` as the working directory
 WORKDIR /app
@@ -62,6 +65,9 @@ ENV PASSWORD=your_password
 ENV LOCAL_TIMEZONE=Europe/Berlin
 ENV RUN_MODE=detect
 ENV BEO_IP=192.168.1.100
+
+# Use the non-root user to run our application
+USER nonroot
 
 # Run the FastAPI application by default
 CMD ["python", "-m", "beo_radio_scrobbler"]
