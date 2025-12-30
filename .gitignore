@@ -18,9 +18,10 @@ jupyter/
 # Log files
 log_*.log
 logs/log_*.log
+/logs/
 
-#Station rules
-station_rules.yaml
-
-#memories from the past
+# memories from the past
 ausrangiert.py
+
+# appdata folder
+/appdata/

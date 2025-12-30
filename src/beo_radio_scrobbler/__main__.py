@@ -2,9 +2,14 @@ import asyncio
 from .config import logger, run_mode
 from .api.beo_client import check_standby, check_radio_active, get_stream
 from .utils.scheduling import sleeping_routine
+from .utils.initialization import initialize_logging, initialize_config
 
 
 async def main():
+
+    await initialize_logging()
+    await initialize_config()
+
     logger.info(f"Starting Radio Scrobbler...")
     while True:
         if await check_standby():
