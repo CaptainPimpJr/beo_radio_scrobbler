@@ -36,7 +36,7 @@ Dockerfile
 .dockerignore
 
 # Documentation
-README.md
+#README.md - it breaks the uv sync if ignored
 docs/
 
 # Tests
