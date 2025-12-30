@@ -13,8 +13,8 @@ ausrangiert.py
 
 # uv
 .uv/
-project.toml
-uv.lock
+#project.toml
+#uv.lock 
 
 # Git
 .git/
