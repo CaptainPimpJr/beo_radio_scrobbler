@@ -59,7 +59,9 @@ async def get_stream() -> None:
                         except KeyError:
                             pass
                         
-                        if RUN_MODE != 'detect':
+                        if RUN_MODE in ['detect', 'detect_smpl']:
+                            pass
+                        else:
                             await station_logic(station_name=l['notification']['data']['name'],
                                         live_description=l['notification']['data']['liveDescription'],
                                         timestamp=l['notification']['timestamp'])
