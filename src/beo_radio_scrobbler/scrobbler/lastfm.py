@@ -2,7 +2,7 @@ import pylast
 import arrow
 import asyncio
 import os
-from ..config import logger, local_time
+from ..config import logger, LOCAL_TIMEZONE, LASTFM_USERNAME, LASTFM_PASSWORD, LASTFM_API_KEY, LASTFM_API_SECRET
 
 
 async def most_recent_scrobble(network: pylast.LastFMNetwork) -> tuple:
@@ -15,8 +15,8 @@ async def most_recent_scrobble(network: pylast.LastFMNetwork) -> tuple:
     Different Error -> None, None
     '''
     try:
-        most_recent_artist = network.get_user(os.environ['USERNAME']).get_recent_tracks(limit=1)[0].track.artist.name
-        most_recent_title = network.get_user(os.environ['USERNAME']).get_recent_tracks(limit=1)[0].track.title
+        most_recent_artist = network.get_user(LASTFM_USERNAME).get_recent_tracks(limit=1)[0].track.artist.name
+        most_recent_title = network.get_user(LASTFM_USERNAME).get_recent_tracks(limit=1)[0].track.title
     except IndexError:
         logger.info("No existing scrobble found.")
         return "-", "-"
@@ -51,10 +51,10 @@ async def double_scrobble_check(artist: str, title: str, network: pylast.LastFMN
 async def scrobbler_action(artist: str, title: str, timestamp: str) -> None:
     try:
         network = pylast.LastFMNetwork(
-            api_key=os.environ['API_KEY'],
-            api_secret=os.environ['API_SECRET'],
-            username=os.environ['USERNAME'],
-            password_hash=pylast.md5(os.environ['PASSWORD']),
+            api_key=LASTFM_API_KEY,
+            api_secret=LASTFM_API_SECRET,
+            username=LASTFM_USERNAME,
+            password_hash=pylast.md5(LASTFM_PASSWORD),
         )
     except Exception as e:
         logger.error(f"Error connecting to Last.fm: {e}")
@@ -75,7 +75,7 @@ async def scrobbler_action(artist: str, title: str, timestamp: str) -> None:
     timestamp = arrow.get(
                 timestamp, 
                 'YYYY-MM-DDTHH:mm:ss.SSSSSS'
-            ).to(local_time).timestamp()
+            ).to(LOCAL_TIMEZONE).timestamp()
 
     # start scrobbling
     logger.debug(f"Scrobbling: {artist} - {title} at {arrow.get(timestamp).format('YYYY-MM-DD HH:mm:ss')}")
