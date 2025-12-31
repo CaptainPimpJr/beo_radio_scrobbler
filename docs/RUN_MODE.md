@@ -28,9 +28,8 @@ The BeoRadio Scrobbler supports different operation modes depending on your need
 
 ### What it does:
 - Captures the current value of notification stream type `NOW_PLAYING_NET_RADIO`
-- Writes **complete notification data** to the `detections.log`
-- Additionally writes **simplified form** to `stations.log`
-  - Simplified form contains: station name + live description
+- Writes **complete notification data** to the log
+- Additionally writes **simplified form** containing station name + live description
 - Helps determine how to parse station name, artist, and title information
 
 ### When to use:
@@ -40,8 +39,7 @@ The BeoRadio Scrobbler supports different operation modes depending on your need
 - Need full API response details
 
 ### Output files:
-- 📄 `detections.log` - Full notification stream data
-- 📄 `stations.log` - Simplified station info
+- 📄 `log_detections.log` - Both full notification stream data and simplified station info
 
 ---
 
@@ -50,7 +48,7 @@ The BeoRadio Scrobbler supports different operation modes depending on your need
 **Simplified diagnostic mode.**
 
 ### What it does:
-- Just like `detect` mode, but **only** writes simplified form to `stations.log`
+- Just like `detect` mode, but **only** writes simplified form containing station name + live description
 - Skips the full notification stream logging
 - Faster and cleaner for basic pattern detection
 
@@ -60,7 +58,7 @@ The BeoRadio Scrobbler supports different operation modes depending on your need
 - Cleaner logs with just essential info
 
 ### Output files:
-- 📄 `stations.log` - Simplified station info only
+- 📄 `log_detections.log` - Simplified station info only
 
 ---
 
@@ -81,7 +79,7 @@ The BeoRadio Scrobbler supports different operation modes depending on your need
 - Curiosity about what else is happening 🤔
 
 ### Output files:
-- 📄 `notifications.log` - All notification events
+- 📄 `log_notifications.log` - All notification events
 
 > ⚠️ **Note**: This mode generates a lot of data. Use sparingly and for diagnostic purposes only.
 
@@ -105,7 +103,7 @@ RUN_MODE=detect python -m beo_radio_scrobbler
 
 | Mode | Logs Everything | Scrobbles | Best For | Output Files |
 |------|----------------|-----------|----------|--------------|
-| `production` | ❌ | ✅ | Normal operation | None |
-| `detect` | ✅ | ❌ | Full diagnostics | detections.log, stations.log |
-| `detect_smpl` | Simplified | ❌ | Quick diagnostics | stations.log |
-| `notify_me` | ✅ | ❌ | API exploration | notifications.log |
+| `production` | ❌ | ✅ | Normal operation | log_scrobbles.log |
+| `detect` | ✅ | ❌ | Full diagnostics | log_detections.log |
+| `detect_smpl` | ⚠️ Simplified | ❌ | Quick diagnostics | log_detections.log |
+| `notify_me` | ✅ | ❌ | API exploration | log_notifications.log |
