@@ -10,13 +10,14 @@ else:
     load_dotenv()
 
 #variables
-beo_ip = os.getenv("BEO_IP", default='')
-local_time = os.getenv("LOCAL_TIMEZONE", default='UTC')  #e.g. "Europe/Berlin"
-run_mode = os.getenv("RUN_MODE", default='detect_smpl')  #development or production
-try:
-    station_rules_file = Path(Path.cwd() / "appdata" / "config" / "station_rules.yaml")
-except:
-    os._exit()
+LASTFM_API_KEY = os.getenv("LASTFM_API_KEY", default='abcd1234')
+LASTFM_API_SECRET=os.getenv("LASTFM_API_SECRET", default='1234abcd')
+LASTFM_USERNAME=os.getenv("LASTFM_USERNAME", default='your_username')
+LASTFM_PASSWORD=os.getenv("LASTFM_PASSWORD", default='your_password')
+LOCAL_TIMEZONE=os.getenv("LOCAL_TIMEZONE", default='UTC')
+RUN_MODE=os.getenv("RUN_MODE", default='detect')
+BEO_IP=os.getenv("BEO_IP", default='192.168.1.100')
+LOGLEVEL=os.getenv("LOGLEVEL", default='INFO').upper()
 
 # logging
 logger.level("SCROBBLE", no=25, color="<yellow>", icon="🎵")
@@ -28,27 +29,31 @@ logger.add(
     rotation="00:00",
     retention="7 days",
     format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}",
+    level=LOGLEVEL,
 )
-if run_mode == 'production':
+if RUN_MODE == 'production':
     logger.add(
         Path(Path.cwd() / "appdata" / "logs" / "log_scrobbles.log"),
         rotation="w1",
         retention="5 years",
         format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
-        filter=lambda record: record["level"].no == 25)
-elif run_mode in ['detect', 'detect_smpl']:
+        filter=lambda record: record["level"].no == 25,
+    )
+elif RUN_MODE in ['detect', 'detect_smpl']:
     logger.add(
         Path(Path.cwd() / "appdata" / "logs" / "log_detections.log"),
         rotation="00:00",
         retention="1 week",
         format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
-        filter=lambda record: record["level"].no == 26)
-elif run_mode == 'notify_me':
+        filter=lambda record: record["level"].no == 26,
+    )
+elif RUN_MODE == 'notify_me':
     logger.add(
         Path(Path.cwd() / "appdata" / "logs" / "log_notifications.log"),
         rotation="00:00",
         retention="7 days",
         format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
-        level="NOTIFICATION")
+        filter=lambda record: record["level"].no == 27,
+    )
 else:
     pass

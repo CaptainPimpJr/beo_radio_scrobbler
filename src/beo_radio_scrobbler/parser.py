@@ -2,7 +2,6 @@ import re
 import yaml
 from pathlib import Path
 from .models import StationConfig
-from .config import station_rules_file
 
 
 class MetadataParser:
@@ -57,7 +56,7 @@ class MetadataParser:
         return mapping.get('artist'), mapping.get('title')
 
 try:
-    parser = MetadataParser(station_rules_file)
+    parser = MetadataParser(Path(Path.cwd() / "appdata" / "config" / "station_rules.yaml"))
 except FileNotFoundError:
     parser = MetadataParser(Path(Path.cwd() / "sample-data" / "sample-station_rules.yaml"))
 except Exception as e:

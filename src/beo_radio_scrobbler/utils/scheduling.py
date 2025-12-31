@@ -1,7 +1,7 @@
 import asyncio
 import arrow
 import os
-from ..config import logger, local_time
+from ..config import logger, LOCAL_TIMEZONE
 
 
 async def sleeping_routine() -> None:
@@ -10,28 +10,28 @@ async def sleeping_routine() -> None:
     '''
     working_hours_start = arrow.get(os.environ.get("WORKING_HOURS_START", "06:00"), 'HH:mm').format('HH:mm')
     working_hours_end = arrow.get(os.environ.get("WORKING_HOURS_END", "23:00"), 'HH:mm').format('HH:mm')
-    now = arrow.now().to(local_time).format('HH:mm')
+    now = arrow.now().to(LOCAL_TIMEZONE).format('HH:mm')
     
     if working_hours_start < working_hours_end:
         if working_hours_start <= now <= working_hours_end:
-            logger.info(f"Within working hours. Sleeping for 1 minutes. {working_hours_end=}, {working_hours_start=}, {now=}")
+            logger.debug(f"Within working hours. Sleeping for 1 minutes. {working_hours_end=}, {working_hours_start=}, {now=}")
             await asyncio.sleep(60)
         else:
             for i in range(30):
-                if (arrow.now().to(local_time).shift(minutes=+1).format('HH:mm') >= working_hours_start) \
-                    and (arrow.now().to(local_time).shift(minutes=+1).format('HH:mm') <= working_hours_end):
+                if (arrow.now().to(LOCAL_TIMEZONE).shift(minutes=+1).format('HH:mm') >= working_hours_start) \
+                    and (arrow.now().to(LOCAL_TIMEZONE).shift(minutes=+1).format('HH:mm') <= working_hours_end):
                     break
-            logger.info(f"Outside working hours. Sleeping for {i+2} minutes.")
+            logger.debug(f"Outside working hours. Sleeping for {i+2} minutes.")
             await asyncio.sleep(60*(i+2))
     else:
         if now >= working_hours_start or now <= working_hours_end:
-            logger.info(f"Within working hours. Sleeping for 1 minutes. {working_hours_end=}, {working_hours_start=}, {now=}")
+            logger.debug(f"Within working hours. Sleeping for 1 minutes. {working_hours_end=}, {working_hours_start=}, {now=}")
             await asyncio.sleep(60)
         else:
             for i in range(30):
-                if (arrow.now().to(local_time).shift(minutes=+1).format('HH:mm') <= working_hours_start) \
-                    and (arrow.now().to(local_time).shift(minutes=+1).format('HH:mm') >= working_hours_end):
+                if (arrow.now().to(LOCAL_TIMEZONE).shift(minutes=+1).format('HH:mm') <= working_hours_start) \
+                    and (arrow.now().to(LOCAL_TIMEZONE).shift(minutes=+1).format('HH:mm') >= working_hours_end):
                     break
-            logger.info(f"Outside working hours. Sleeping for {i+2} minutes.")
+            logger.debug(f"Outside working hours. Sleeping for {i+2} minutes.")
             await asyncio.sleep(60*(i+2))
     return
