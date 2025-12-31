@@ -61,16 +61,27 @@ timeline
 
 ---
 
+## Documentation 📚
+
+For more detailed information, check out these documentation files:
+
+- **[Run Modes](docs/RUN_MODE.md)** - Different operation modes (production, detect, detect_smpl, notify_me)
+- **[Feature Requests](docs/FEATURE_REQUEST.md)** - Planned features and how to contribute
+- **[How-Tos](docs/HowTos.md)** - Guides and tutorials for common tasks
+
+---
+
 ## Credits & Acknowledgments
 
 This work relies on several amazing tools and resources:
 
+- **Initial proof of work** written using `requests` and `pylast`
 - **[pylast](https://github.com/pylast/pylast)** - Python library for Last.fm scrobbling
 - **[BeoNetRemote Client API](https://support.bang-olufsen.com/hc/en-us/articles/360049859212-Drivers-for-3rd-Party-integration)** - Bang & Olufsen's API for third-party integration
   - [API Documentation](https://documenter.getpostman.com/view/1053298/T1LTe4Lt)
-- **[Astral UV Docker Example](https://github.com/astral-sh/uv-docker-example)** - Dockerfile template
+- **[Astral UV Docker Example](https://github.com/astral-sh/uv-docker-example)** - Dockerfile template and basic setup
 - **AI Assistance:**
-  - Initial proof of work written using `requests` and `pylast`
   - Static if-else cases improved with **Claude Sonnet 4.5**
   - Project structure modernized with **GitHub Copilot**
-  - This README enhanced with **GitHub Copilot** 🤖 
+  - This README enhanced with **GitHub Copilot** 🤖
+- **Docker:** Basic setup and minor improvements 
