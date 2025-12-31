@@ -1,5 +1,5 @@
 import asyncio
-from .config import logger, run_mode
+from .config import logger, RUN_MODE
 from .api.beo_client import check_standby, check_radio_active, get_stream
 from .utils.scheduling import sleeping_routine
 from .utils.initialization import initialize_logging, initialize_config
@@ -17,18 +17,20 @@ async def main():
                 if await check_radio_active():
                     logger.info("Radio is active.")
                     await get_stream()
-                    if run_mode in ['detect', 'notify_me']:
+                    if RUN_MODE in ['detect', 'detect_smpl', 'notify_me']:
                         logger.info("Run mode is 'detect' or 'notify_me'. Exiting after one round of detection.")
                         break
                 else:
                     logger.info("Radio is not active. Going to sleep.")
+                    await sleeping_routine()
                     
             except KeyError:
                 logger.error("KeyError checking radio status. - Should be none-critical")
         else:
             logger.info("Device is in standby mode. Going to sleep")
-            
-        await sleeping_routine()
+            await sleeping_routine()
+    
+    quit()
 
 
 def cli():
