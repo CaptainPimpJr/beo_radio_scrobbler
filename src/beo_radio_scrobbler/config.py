@@ -29,6 +29,7 @@ logger.add(
     rotation="00:00",
     retention="7 days",
     format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}",
+    level=LOGLEVEL,
 )
 if RUN_MODE == 'production':
     logger.add(
@@ -36,20 +37,23 @@ if RUN_MODE == 'production':
         rotation="w1",
         retention="5 years",
         format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
-        filter=lambda record: record["level"].no == 25)
+        filter=lambda record: record["level"].no == 25,
+    )
 elif RUN_MODE in ['detect', 'detect_smpl']:
     logger.add(
         Path(Path.cwd() / "appdata" / "logs" / "log_detections.log"),
         rotation="00:00",
         retention="1 week",
         format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
-        filter=lambda record: record["level"].no == 26)
+        filter=lambda record: record["level"].no == 26,
+    )
 elif RUN_MODE == 'notify_me':
     logger.add(
         Path(Path.cwd() / "appdata" / "logs" / "log_notifications.log"),
         rotation="00:00",
         retention="7 days",
         format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
-        level="NOTIFICATION")
+        filter=lambda record: record["level"].no == 27,
+    )
 else:
     pass
