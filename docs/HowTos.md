@@ -149,7 +149,7 @@ stations:
 **Problem:** Scrobbles not appearing on Last.fm
 
 **Solutions:**
-1. Check `log_radio_scrobbler.log` for errors
+1. Check `log_scrobbles.log` (production mode) or `log_radio_scrobbler.log` for errors
 2. Verify your Last.fm credentials in `.env` file
 3. Ensure the station rule matches the exact station name from the API
 
