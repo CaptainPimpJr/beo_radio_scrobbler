@@ -84,4 +84,4 @@ This work relies on several amazing tools and resources:
   - Static if-else cases improved with **Claude Sonnet 4.5**
   - Project structure modernized with **GitHub Copilot**
   - This README enhanced with **GitHub Copilot** 🤖
-- **Docker:** Basic setup and minor improvements 
+- **Docker:** Basic setup and minor improvements
