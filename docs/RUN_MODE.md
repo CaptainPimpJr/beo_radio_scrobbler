@@ -41,24 +41,6 @@ The BeoRadio Scrobbler supports different operation modes depending on your need
 ### Output files:
 - 📄 `log_detections.log` - Both full notification stream data and simplified station info
 
----
-
-## 🔍 `detect_smpl`
-
-**Simplified diagnostic mode.**
-
-### What it does:
-- Just like `detect` mode, but **only** writes simplified form containing station name + live description
-- Skips the full notification stream logging
-- Faster and cleaner for basic pattern detection
-
-### When to use:
-- Quick station pattern identification
-- When full API data isn't needed
-- Cleaner logs with just essential info
-
-### Output files:
-- 📄 `log_detections.log` - Simplified station info only
 
 ---
 

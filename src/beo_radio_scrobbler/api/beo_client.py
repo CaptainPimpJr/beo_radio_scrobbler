@@ -52,14 +52,14 @@ async def get_stream() -> None:
                 else:
                     if l['notification']['type'] == 'NOW_PLAYING_NET_RADIO':
                         
-                        if not RUN_MODE == 'detect_smpl':
-                            logger.log("STATION", l)
+                    
+                        logger.log("STATION", l)
                         try:
                             logger.log("STATION", f"Detected station: [data][name]: {l['notification']['data']['name']}; [data][liveDescription]: {l['notification']['data']['liveDescription']}")
                         except KeyError:
                             pass
                         
-                        if RUN_MODE in ['detect', 'detect_smpl']:
+                        if RUN_MODE in ['detect',]:
                             pass
                         else:
                             await station_logic(station_name=l['notification']['data']['name'],

@@ -39,7 +39,7 @@ if RUN_MODE == 'production':
         format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
         filter=lambda record: record["level"].no == 25,
     )
-elif RUN_MODE in ['detect', 'detect_smpl']:
+elif RUN_MODE in ['detect',]:
     logger.add(
         Path(Path.cwd() / "appdata" / "logs" / "log_detections.log"),
         rotation="00:00",

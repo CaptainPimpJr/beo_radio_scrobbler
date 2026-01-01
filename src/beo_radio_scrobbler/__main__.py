@@ -17,7 +17,7 @@ async def main():
                 if await check_radio_active():
                     logger.info("Radio is active.")
                     await get_stream()
-                    if RUN_MODE in ['detect', 'detect_smpl', 'notify_me']:
+                    if RUN_MODE in ['detect', 'notify_me']:
                         logger.info("Run mode is 'detect' or 'notify_me'. Exiting after one round of detection.")
                         break
                 else:
