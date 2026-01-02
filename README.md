@@ -389,3 +389,9 @@ Beoplay M3
 Bang & Olufsen Active Loudspeakers:
 BeoLab 90
 BeoLab 50
+
+## Mozart API - recent Bang & Olufsen Models
+
+I do not think I want to add a "Buy me a ~~coffee~~ new B&O Speaker"-Button.  
+But if you insist on supporting with a replacement for my Beosound 1, open an issue in github...  
+I will add Mozart API as soon as I have replaced my Beosound 1 (which is not planned), or I have access to a Mozart API supporting device. 
