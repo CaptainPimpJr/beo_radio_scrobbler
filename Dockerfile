@@ -51,8 +51,5 @@ ENV PATH="/app/.venv/bin:$PATH"
 # Use `/app` as the working directory
 WORKDIR /app
 
-ENV IN_PROD=1
-# ENVIRONMENT VARIABLES that need to be set
-
 # Run the FastAPI application by default
 CMD ["python", "-m", "beo_radio_scrobbler"]

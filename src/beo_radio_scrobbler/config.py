@@ -4,10 +4,7 @@ from loguru import logger
 from pathlib import Path
 
 #.env file
-if os.getenv("IN_PROD") == "1":
-    pass  # In production, assume environment variables are set externally
-else:
-    load_dotenv()
+load_dotenv(Path(Path.cwd() / "appdata" / "config" / ".env"), override=True)
 
 #variables
 LASTFM_API_KEY = os.getenv("LASTFM_API_KEY", default='abcd1234')
@@ -39,7 +36,7 @@ if RUN_MODE == 'production':
         format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
         filter=lambda record: record["level"].no == 25,
     )
-elif RUN_MODE in ['detect', 'detect_smpl']:
+elif RUN_MODE in ['detect',]:
     logger.add(
         Path(Path.cwd() / "appdata" / "logs" / "log_detections.log"),
         rotation="00:00",
