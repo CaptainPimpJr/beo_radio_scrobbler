@@ -345,19 +345,25 @@ For more detailed information, check out these documentation files:
 
 ## Credits & Acknowledgments
 
-This work relies on several amazing tools and resources:
+- **Initial proof of work** written using `requests` and `pylast` 
 
-- **Initial proof of work** written using `requests` and `pylast`
+### Third Party Libraries used:
 - **[pylast](https://github.com/pylast/pylast)** - Python library for Last.fm scrobbling
 - **[BeoNetRemote Client API](https://support.bang-olufsen.com/hc/en-us/articles/360049859212-Drivers-for-3rd-Party-integration)** - Bang & Olufsen's API for third-party integration
   - [API Documentation](https://documenter.getpostman.com/view/1053298/T1LTe4Lt)
+- **[uv](https://github.com/astral-sh/uv)** - An extremely fast Python package installer and resolver
 - **[Astral UV Docker Example](https://github.com/astral-sh/uv-docker-example)** - Dockerfile template and basic setup
 - **[python-dotenv](https://github.com/theskumar/python-dotenv)** - loading .env file
+- **[Arrow](https://github.com/arrow-py/arrow)** (Apache 2.0) - Better dates and times for Python
+- **[Loguru](https://github.com/Delgan/loguru)** (MIT) - Python logging made simple
+- **[Pydantic](https://github.com/pydantic/pydantic)** (MIT) - Data validation using Python type hints
+- **[Requests](https://github.com/psf/requests)** (Apache 2.0) - HTTP library for Python
+- **[PyYAML](https://github.com/yaml/pyyaml)** (MIT) - YAML parser and emitter for Python
+
 - **AI Assistance:**
   - Static if-else cases improved with **Claude Sonnet 4.5**
   - Project structure modernized with **GitHub Copilot**
   - This README enhanced with **GitHub Copilot** 🤖
-- **Docker:** Basic setup and minor improvements
 
 
 ## Supported Devices
