@@ -11,6 +11,7 @@ async def main():
     await initialize_config()
 
     logger.info(f"Starting Radio Scrobbler...")
+    logger.info(f"Run mode: {RUN_MODE}")
     while True:
         if await check_standby():
             try:
