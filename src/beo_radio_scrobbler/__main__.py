@@ -5,6 +5,7 @@ from .utils.scheduling import sleeping_routine
 from .utils.initialization import initialize_logging, initialize_config
 
 
+
 async def main():
 
     await initialize_logging()
