@@ -107,3 +107,26 @@ async def scrobbler_action(artist: str, title: str, timestamp: str) -> None:
 
 
     return
+
+
+async def love_track():
+    logger.debug("Loving track...")
+    try:
+        network = pylast.LastFMNetwork(
+            api_key=LASTFM_API_KEY,
+            api_secret=LASTFM_API_SECRET,
+            username=LASTFM_USERNAME,
+            password_hash=pylast.md5(LASTFM_PASSWORD),
+        )
+    except Exception as e:
+        logger.error(f"Error connecting to Last.fm: {e}")
+        return
+    
+    most_recent_artist, most_recent_title = await most_recent_scrobble(network)
+    try:
+        network.get_track(most_recent_artist, most_recent_title).love()
+        logger.info(f"Loved track: {most_recent_artist} - {most_recent_title}")
+    except Exception as e:
+        logger.error(f"Error loving track: {e}")
+        
+    return

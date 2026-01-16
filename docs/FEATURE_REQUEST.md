@@ -4,10 +4,6 @@ This document tracks potential features that could be added to the BeoRadio Scro
 
 ## Planned Features
 
-### 🌐 Web Application
-- **Last Tracks Display**: Create a web app showing the last X tracks that were scrobbled
-- **User Interface**: Clean, responsive interface to view listening history
-
 ### 🎵 Playlist Management
 - **Batch Add to Playlist**: Feature to add all scrobbled tracks to a playlist
 - **Manual Add by Click**: Interactive button in the web app to add individual tracks to a playlist

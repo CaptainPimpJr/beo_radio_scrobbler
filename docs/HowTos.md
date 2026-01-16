@@ -129,6 +129,15 @@ Once you're satisfied with the parsing:
 
 ---
 
+### Adding "loved" to a last.fm track that is currently running on the radio
+
+1. **Turn Volume Up**
+2. **Turn Volume Down**
+3. **Each step is allowed to take one second**
+
+
+---
+
 ## Tips & Tricks
 
 ### Handling Multiple Stations
