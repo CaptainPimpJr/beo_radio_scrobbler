@@ -81,8 +81,8 @@ async def scrobbler_action(artist: str, title: str, timestamp: str) -> None:
     logger.debug(f"Scrobbling: {artist} - {title} at {arrow.get(timestamp).format('YYYY-MM-DD HH:mm:ss')}")
     try:
         network.scrobble(
-            artist.casefold(),
-            title.casefold(), 
+            artist,
+            title, 
             timestamp
         )
     except Exception as e:
