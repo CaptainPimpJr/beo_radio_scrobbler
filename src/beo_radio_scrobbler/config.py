@@ -1,4 +1,5 @@
 import os
+import sys
 from dotenv import load_dotenv
 from loguru import logger
 from pathlib import Path
@@ -17,9 +18,24 @@ BEO_IP=os.getenv("BEO_IP", default='192.168.1.100')
 LOGLEVEL=os.getenv("LOGLEVEL", default='INFO').upper()
 
 # logging
+logger.remove()
 logger.level("SCROBBLE", no=25, color="<yellow>", icon="🎵")
 logger.level("STATION", no=26, color="<green>", icon="📻")
 logger.level("NOTIFICATION", no=27, color="<blue>", icon="🔔")
+
+# ensure valid log level
+if LOGLEVEL in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
+    pass
+else:
+    LOGLEVEL = 'INFO'
+
+# add standard output logger
+logger.add(
+    sys.stdout,
+    level="DEBUG",
+    format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | {level} | {message}"
+    )
+
 
 logger.add(
     Path(Path.cwd() / "appdata" / "logs" / "log_radio_scrobbler.log"),
