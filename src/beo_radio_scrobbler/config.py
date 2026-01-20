@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 from dotenv import load_dotenv
 from loguru import logger
 from pathlib import Path
@@ -7,7 +8,7 @@ from pathlib import Path
 #.env file
 load_dotenv(Path(Path.cwd() / "appdata" / "config" / ".env"), override=True)
 
-#variables
+# variables
 LASTFM_API_KEY = os.getenv("LASTFM_API_KEY", default='abcd1234')
 LASTFM_API_SECRET=os.getenv("LASTFM_API_SECRET", default='1234abcd')
 LASTFM_USERNAME=os.getenv("LASTFM_USERNAME", default='your_username')
@@ -16,6 +17,21 @@ LOCAL_TIMEZONE=os.getenv("LOCAL_TIMEZONE", default='UTC')
 RUN_MODE=os.getenv("RUN_MODE", default='detect')
 BEO_IP=os.getenv("BEO_IP", default='192.168.1.100')
 LOGLEVEL=os.getenv("LOGLEVEL", default='INFO').upper()
+WORKINGHOURS_START=os.getenv("WORKINGHOURS_START", default='06:00')
+WORKINGHOURS_END=os.getenv("WORKINGHOURS_END", default='23:00')
+
+# Robustness
+## working hours format validation
+if bool(re.match(r'^\d{2}:\d{2}$', WORKINGHOURS_START)):
+    pass
+else:
+    WORKINGHOURS_START = '06:00'
+
+if bool(re.match(r'^\d{2}:\d{2}$', WORKINGHOURS_END)):
+    pass
+else:
+    WORKINGHOURS_END = '23:00'
+
 
 # logging
 logger.remove()
