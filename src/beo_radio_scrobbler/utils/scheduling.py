@@ -1,15 +1,14 @@
 import asyncio
 import arrow
-import os
-from ..config import logger, LOCAL_TIMEZONE
+from ..config import logger, LOCAL_TIMEZONE, WORKINGHOURS_START, WORKINGHOURS_END
 
 
 async def sleeping_routine() -> None:
     '''
     Sleeps according to working hours defined in .env file.
     '''
-    working_hours_start = arrow.get(os.environ.get("WORKING_HOURS_START", "06:00"), 'HH:mm').format('HH:mm')
-    working_hours_end = arrow.get(os.environ.get("WORKING_HOURS_END", "23:00"), 'HH:mm').format('HH:mm')
+    working_hours_start = arrow.get(WORKINGHOURS_START, 'HH:mm').format('HH:mm')
+    working_hours_end = arrow.get(WORKINGHOURS_END, 'HH:mm').format('HH:mm')
     now = arrow.now().to(LOCAL_TIMEZONE).format('HH:mm')
     
     if working_hours_start < working_hours_end:
