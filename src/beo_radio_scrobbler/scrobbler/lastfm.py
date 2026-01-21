@@ -83,7 +83,8 @@ async def scrobbler_action(artist: str, title: str, timestamp: str) -> None:
         network.scrobble(
             artist,
             title, 
-            timestamp
+            timestamp,
+            chosen_by_user=False
         )
     except Exception as e:
         logger.error(f"Error scrobbling track: {e}")
